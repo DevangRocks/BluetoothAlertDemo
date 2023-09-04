@@ -1,0 +1,2 @@
+rootProject.name = "BluetoothAlertDemo"
+include ':app'

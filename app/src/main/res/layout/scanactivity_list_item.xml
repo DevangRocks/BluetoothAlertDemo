@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <RelativeLayout
+            android:id="@+id/ScanActivity_list_item_rssi_rel"
+            android:layout_width="60dp"
+            android:layout_height="70dp"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/ScanActivity_list_item_img_favorite1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/ScanActivity_list_item_rssi"
+                android:layout_centerHorizontal="true"
+                android:paddingRight="10dp"
+                android:src="@drawable/favorite"
+                android:visibility="gone" />
+
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:id="@+id/ScanActivity_list_item_rssi_bg"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:background="@drawable/rssicircle"-->
+<!--                custom:fillColorNew="@color/navigationtabselected"-->
+<!--                custom:strokeColorNew="@color/navigationtabselected"-->
+<!--                custom:strokeWidthNew="1" />-->
+
+            <TextView
+                android:id="@+id/ScanActivity_list_item_rssi"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/ScanActivity_list_item_img_favorite"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignTop="@+id/ScanActivity_list_item_rssi"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/favourite"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ScanActivity_list_item_rel_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+
+            <Button
+                android:id="@+id/ScanActivity_list_item_btn_connect"
+                android:layout_width="110dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/connect_bg_green"
+                android:padding="5dp"
+                android:text="@string/connect"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/ScanActivity_list_item_rel_connect"
+            android:layout_toRightOf="@+id/ScanActivity_list_item_rssi_rel">
+
+            <TextView
+                android:id="@+id/ScanActivity_list_item_deviceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:paddingStart="3dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="3dp"
+                android:text="@string/strdevicename"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/ScanActivity_list_item_txt_logicalname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ScanActivity_list_item_deviceName"
+                android:layout_marginEnd="10dp"
+                android:paddingLeft="3dp"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ScanActivity_list_item_deviceAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ScanActivity_list_item_txt_logicalname"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="3dp"
+                android:paddingTop="3dp"
+                android:text="D8:47:12:67:F5"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/ScanActivity_list_item_bonded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ScanActivity_list_item_deviceAddress"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="3dp"
+                android:text="Not Bonded"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

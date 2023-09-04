@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="DrawerOptions">
+        <item>Filter</item>
+        <item>Settings</item>
+        <item>About Device</item>
+        <item>Feedback</item>
+        <item>Help</item>
+        <item>FAQ</item>
+        <item>About Us</item>
+    </array>
+    <array name="AlertLevel">
+        <item>0x00 (No Alert)</item>
+        <item>0x01 (Mild Alert)</item>
+        <item>0x02 (High Alert)</item>
+    </array>
+    <array name="strwritearray">
+        <item>Text</item>
+        <item>Byte Array</item>
+    </array>
+</resources>
