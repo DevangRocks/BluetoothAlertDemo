@@ -84,7 +84,7 @@ public class MyBleForegroundService extends Service {
                 } else {
                     context.stopService(notificationIntent);
                 }
-            } 
+            }
         }
         Notification notification = new NotificationCompat.Builder(this, TAG)
                 .setContentText("Bluetooth is On")
