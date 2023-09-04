@@ -1,37 +1,55 @@
 package com.example.bluetoothalertdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.bluetoothalertdemo.service.BluetoothConnectService;
 import com.example.bluetoothalertdemo.service.MyBleForegroundService;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
 
     ToggleButton sbBoot, sbVibration;
-    private Button btnDevice;
+    private Button btnDevice, btnGet;
     private ToggleButton bleAlert;
     private ToggleButton alertSound;
     SharedPreferences.Editor editor;
+
+    TextView textview1;
+    private static final int REQUEST_ENABLE_BT = 1;
+    BluetoothAdapter blueToothAdapter;
+
+    private ListView lstvw;
+    private ArrayAdapter aAdapter;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         bleAlert = findViewById(R.id.switchBluetooth);
         alertSound = findViewById(R.id.switchAlertSound);
         btnDevice = (Button) findViewById(R.id.btnDevice);
+        btnGet = (Button) findViewById(R.id.btnGet);
 
         initView();
 
@@ -52,14 +71,24 @@ public class MainActivity extends AppCompatActivity {
         btnDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                Intent i = new Intent(MainActivity.this, HomeScreen.class);
                 startActivity(i);
+            }
+        });
+
+        btnGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBluetoothState();
             }
         });
     }
 
     public void initView() {
-        BluetoothAdapter blueToothAdapter = BluetoothAdapter.getDefaultAdapter();
+        textview1 = (TextView) findViewById(R.id.textView1);
+        blueToothAdapter = BluetoothAdapter.getDefaultAdapter();
+        CheckBluetoothState();
+//        textview1.append("\nAdapter: " + blueToothAdapter);
         BluetoothConnectService bluetoothConnectService = new BluetoothConnectService();
 
         if (sbBoot.isChecked()) {
@@ -129,18 +158,16 @@ public class MainActivity extends AppCompatActivity {
         if (blueToothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Bluetooth not supported", Toast.LENGTH_SHORT).show();
         } else {
-                if (blueToothAdapter.isEnabled()) {
-                    Intent serviceIntent = new Intent(getApplicationContext(), MyBleForegroundService.class);
-                    startService(serviceIntent);
+            if (blueToothAdapter.isEnabled()) {
+                Intent serviceIntent = new Intent(getApplicationContext(), MyBleForegroundService.class);
+                startService(serviceIntent);
 
-//                IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//                registerReceiver(bluetoothConnectService, filter);
-                } else {
-//                IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//                registerReceiver(bluetoothConnectService, filter);
-                    Intent serviceIntent = new Intent(getApplicationContext(), MyBleForegroundService.class);
-                    stopService(serviceIntent);
-                }
+            } else {
+                Toast.makeText(MainActivity.this, "Bluetooth is Off", Toast.LENGTH_SHORT).show();
+                Intent serviceIntent = new Intent(getApplicationContext(), MyBleForegroundService.class);
+                stopService(serviceIntent);
+            }
+
         }
 
     }
@@ -217,4 +244,58 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
         finishAffinity();
     }
+
+    private void CheckBluetoothState() {
+        if (blueToothAdapter == null) {
+            textview1.append("\nBluetooth NOT supported. Aborting.");
+            return;
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            Set<BluetoothDevice> pairedDevices = blueToothAdapter.getBondedDevices();
+            ArrayList list = new ArrayList();
+            if (pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    String devicename = device.getName();
+                    String macAddress = device.getAddress();
+                    list.add("Name: " + devicename + "MAC Address: " + macAddress);
+                }
+                lstvw = (ListView) findViewById(R.id.deviceList);
+                aAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, list);
+                lstvw.setAdapter(aAdapter);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT) {
+            CheckBluetoothState();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 }

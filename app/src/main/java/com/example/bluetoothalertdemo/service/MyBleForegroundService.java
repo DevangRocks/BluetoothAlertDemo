@@ -25,27 +25,13 @@ import java.util.Calendar;
 import java.util.Random;
 
 public class MyBleForegroundService extends Service {
-    private Looper mServiceLooper;
-
     private final static String TAG = "MyForegroundService";
 
-    Random r;
-
     SharedPreferences sharedPreferences;
-    int spLevel, iLevel;
-    String s1, e1;
 
     PendingIntent pendingIntent;
-    Intent my_intent;
-    Calendar datetime;
+
     Context context = this;
-
-    private String soundPath;
-    private Uri uri;
-    private int batteryTemperature;
-    private int tempValue;
-    private boolean isServiceRunning = true;
-
     public static SharedPreferences preferances1;
     String nm, temValue;
     String buttonID;
@@ -70,7 +56,6 @@ public class MyBleForegroundService extends Service {
         boolean alertSound = preferences.getBoolean("boolAlertSound", false);
 
         BluetoothAdapter blueToothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
 
         if (blueToothAdapter == null){
             //
@@ -79,19 +64,22 @@ public class MyBleForegroundService extends Service {
                 if (blueToothAdapter.isEnabled()) {
                     String input = intent.getStringExtra("inputExtra");
                     createNotificationChannel();
+                    Intent notificationIntent = new Intent(this, MainActivity.class);
+
                     PendingIntent pendingIntent = PendingIntent.getActivity(this,
                             0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-                } else {
-                    context.stopService(notificationIntent);
+                    Notification notification = new NotificationCompat.Builder(this, TAG)
+                            .setContentText("Bluetooth is On")
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentIntent(pendingIntent)
+                            .build();
+                    startForeground(1, notification);
                 }
+            } else {
+                stopForeground( true);
             }
         }
-        Notification notification = new NotificationCompat.Builder(this, TAG)
-                .setContentText("Bluetooth is On")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pendingIntent)
-                .build();
-        startForeground(1, notification);
+
         //do heavy work on a background thread
         //stopSelf();
         return START_NOT_STICKY;
@@ -100,6 +88,12 @@ public class MyBleForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void createNotificationChannel() {
@@ -113,10 +107,5 @@ public class MyBleForegroundService extends Service {
             manager.createNotificationChannel(serviceChannel);
         }
     }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 }
+
